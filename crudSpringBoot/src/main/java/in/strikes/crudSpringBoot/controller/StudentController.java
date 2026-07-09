@@ -1,7 +1,12 @@
 package in.strikes.crudSpringBoot.controller;
 
+import in.strikes.crudSpringBoot.Dto.CreateStudentRequestDto;
+import in.strikes.crudSpringBoot.Dto.CreateStudentResponseDto;
+import in.strikes.crudSpringBoot.Dto.UpdateStudentRequestDto;
+import in.strikes.crudSpringBoot.Dto.UpdateStudentResponseDto;
 import in.strikes.crudSpringBoot.entity.Student;
 import in.strikes.crudSpringBoot.service.StudentService;
+import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -20,18 +25,20 @@ public class StudentController {
 
     //Create Student
     @PostMapping ("/create")
-    public ResponseEntity<Student> createStudent(@RequestBody Student student ){
-        Student createdStudent = studentService.createStudent(student);
+    public ResponseEntity<CreateStudentResponseDto> createStudent(
+           @Valid @RequestBody CreateStudentRequestDto createStudentRequestDto){
+
+        CreateStudentResponseDto createStudent = studentService.createStudent(createStudentRequestDto);
 
         return ResponseEntity
                 .status(HttpStatus.CREATED)
-                .body(createdStudent) ;
+                .body(createStudent) ;
     }
 
 
     @GetMapping ("/get/{id}")
-    public ResponseEntity<Student> getStudent(@PathVariable Long id){
-        Student studentRes = studentService.getStudent(id);
+    public ResponseEntity<CreateStudentResponseDto> getStudent(@PathVariable Long id){
+        CreateStudentResponseDto studentRes = studentService.getStudent(id);
 
         if (studentRes == null){
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
@@ -42,28 +49,29 @@ public class StudentController {
                 .body(studentRes);
     }
 
-    @GetMapping ("/getAll")
-    public ResponseEntity<List<Student>> getStudent(){
-        List<Student> studentList = studentService.getAllStudent();
+    @GetMapping("/getAll")
+    public ResponseEntity<List<CreateStudentResponseDto>> getStudent() {
 
-        if (studentList.isEmpty()){
+        List<CreateStudentResponseDto> studentList = studentService.getAllStudent();
+
+        if (studentList.isEmpty()) {
             return ResponseEntity.notFound().build();
         }
 
         return ResponseEntity.ok(studentList);
-
     }
 
     @PutMapping("/update/{id}")
-    public ResponseEntity<Student> updateStudent(@PathVariable Long id ,
-                                                 @RequestBody Student studentReq){
+    public ResponseEntity<UpdateStudentRequestDto> updateStudent(@PathVariable Long id ,
+                                                 @RequestBody UpdateStudentRequestDto updateStudentRequestDto){
 
-         Student studentRes=studentService.updateStudent(id ,studentReq );
+         UpdateStudentResponseDto studentRes=studentService.
+                 updateStudent(id ,updateStudentRequestDto );
 
          if (studentRes==null){
              return ResponseEntity.notFound().build();
          }
-         return ResponseEntity.ok(studentRes);
+         return ResponseEntity.ok(updateStudentRequestDto);
     }
 
     @DeleteMapping ("/delete/{id}")
@@ -74,6 +82,15 @@ public class StudentController {
           return ResponseEntity.notFound().build();
       }
       return  ResponseEntity.ok("Record Deleted");
-
     }
+
+    @PatchMapping ("delete-soft/{id}")
+    public ResponseEntity<String> deleteStudentSoftly (@PathVariable Long id){
+        Boolean isDeleted = studentService.deleteStudentSoftly(id);
+
+        if (!isDeleted)return ResponseEntity.notFound().build();
+        return ResponseEntity.ok("Record Deleted");
+    }
+
+
 }

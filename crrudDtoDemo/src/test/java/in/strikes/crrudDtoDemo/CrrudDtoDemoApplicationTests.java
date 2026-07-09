@@ -1,10 +1,10 @@
-package com.codingshuttle.youtube.hospitalManagement;
+package in.strikes.crrudDtoDemo;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
-class HospitalManagementApplicationTests {
+class CrrudDtoDemoApplicationTests {
 
 	@Test
 	void contextLoads() {
