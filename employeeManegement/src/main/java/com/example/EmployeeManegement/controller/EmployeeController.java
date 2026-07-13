@@ -64,6 +64,26 @@ public class EmployeeController {
 
     }
 
+        @DeleteMapping ("/delete/{id}")
+        public ResponseEntity<String> deleteEmployee (@PathVariable Long id){
+
+             employeeService.deleteEmployee(id);
+
+            return ResponseEntity.ok( "Employee delete successfully");
+
+        }
+
+        @PatchMapping ("/soft-delete/{id}")
+        public ResponseEntity<String>  softDeleteEmployee (@PathVariable Long id ){
+
+        employeeService.softDeleteEmployee(id);
+
+        return ResponseEntity.ok("Employee soft deleted successfully.") ;
+
+        }
+
+
+
 
 
 

@@ -30,6 +30,9 @@ public class UpdateEmployeeRequestDto {
         return name;
     }
 
+    private Boolean isDeleted = false ;
+
+
     public void setName(String name) {
         this.name = name;
     }
@@ -81,4 +84,6 @@ public class UpdateEmployeeRequestDto {
     public void setAge(Integer age) {
         this.age = age;
     }
+
+
 }

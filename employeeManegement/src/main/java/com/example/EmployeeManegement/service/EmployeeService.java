@@ -6,7 +6,9 @@ import com.example.EmployeeManegement.dto.UpdateEmployeeRequestDto;
 import com.example.EmployeeManegement.entity.Employee;
 import com.example.EmployeeManegement.repository.EmployeeRepository;
 import jakarta.validation.Valid;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 
 import java.time.LocalDateTime;
@@ -39,6 +41,7 @@ public class EmployeeService {
         employee.setCreatedAt(LocalDateTime.now());
         employee.setUpdatedAt(LocalDateTime.now());
 
+
         //Save Employee
         Employee savedEmployee = employeeRepository.save(employee);
 
@@ -53,6 +56,7 @@ public class EmployeeService {
         responseDto.setSalary(savedEmployee.getSalary());
         responseDto.setPhoneNumber(savedEmployee.getPhoneNumber());
         responseDto.setAge(savedEmployee.getAge());
+        responseDto.setDeleted(savedEmployee.getDeleted());
         responseDto.setCreatedAt(savedEmployee.getCreatedAt());
         responseDto.setUpdatedAt(savedEmployee.getUpdatedAt());
 
@@ -63,7 +67,7 @@ public class EmployeeService {
 
     public EmployeeResponseDto getEmployeeById(Long id) {
 
-        Optional<Employee> employeeOptional = employeeRepository.findById(id);
+        Optional<Employee> employeeOptional = employeeRepository.findByIdAndIsDeletedFalse(id);
 
         if (!employeeOptional.isPresent()) {
             throw new RuntimeException("Employee Not Found by this Id");
@@ -81,6 +85,7 @@ public class EmployeeService {
         responseDto.setSalary(employee.getSalary());
         responseDto.setPhoneNumber(employee.getPhoneNumber());
         responseDto.setAge(employee.getAge());
+        responseDto.setDeleted(employee.getDeleted());
         responseDto.setCreatedAt(employee.getCreatedAt());
         responseDto.setUpdatedAt(employee.getUpdatedAt());
 
@@ -91,7 +96,7 @@ public class EmployeeService {
 
     public List<EmployeeResponseDto> findAllEmployees() {
 
-        List<Employee> employeeList = employeeRepository.findAll() ;
+        List<Employee> employeeList = employeeRepository.findByIsDeletedFalse();
 
         List<EmployeeResponseDto> responseDtoList = new ArrayList<>();
 
@@ -106,6 +111,7 @@ public class EmployeeService {
             responseDto.setSalary(employee.getSalary());
             responseDto.setPhoneNumber(employee.getPhoneNumber());
             responseDto.setAge(employee.getAge());
+            responseDto.setDeleted(employee.getDeleted());
             responseDto.setCreatedAt(employee.getCreatedAt());
             responseDto.setUpdatedAt(employee.getUpdatedAt());
 
@@ -119,7 +125,7 @@ public class EmployeeService {
             UpdateEmployeeRequestDto updateEmployeeRequestDto) {
 
         // Find employee by ID
-        Employee employee = employeeRepository.findById(id)
+        Employee employee = employeeRepository.findByIdAndIsDeletedFalse(id)
                 .orElseThrow(() -> new RuntimeException("Employee not found"));
 
         // Update employee fields
@@ -130,6 +136,7 @@ public class EmployeeService {
         employee.setSalary(updateEmployeeRequestDto.getSalary());
         employee.setPhoneNumber(updateEmployeeRequestDto.getPhoneNumber());
         employee.setAge(updateEmployeeRequestDto.getAge());
+
         employee.setUpdatedAt(LocalDateTime.now());
 
         // Save updated employee
@@ -146,9 +153,58 @@ public class EmployeeService {
         responseDto.setSalary(updatedEmployee.getSalary());
         responseDto.setPhoneNumber(updatedEmployee.getPhoneNumber());
         responseDto.setAge(updatedEmployee.getAge());
+        responseDto.setDeleted(updatedEmployee.getDeleted());
         responseDto.setCreatedAt(updatedEmployee.getCreatedAt());
         responseDto.setUpdatedAt(updatedEmployee.getUpdatedAt());
 
         return responseDto;
+    }
+
+    public EmployeeResponseDto deleteEmployee(Long id) {
+
+        Employee employee = employeeRepository.findById(id)
+                .orElseThrow(()-> new RuntimeException("Enployee Not Found"));
+
+        EmployeeResponseDto responseDto = new EmployeeResponseDto();
+
+        responseDto.setId(employee.getId());
+        responseDto.setName(employee.getName());
+        responseDto.setEmail(employee.getEmail());
+        responseDto.setAge(employee.getAge());
+        responseDto.setDeleted(employee.getDeleted());
+        responseDto.setDepartment(employee.getDepartment());
+        responseDto.setDesignation(employee.getDesignation());
+        responseDto.setPhoneNumber(employee.getPhoneNumber());
+        responseDto.setSalary(employee.getSalary());
+        responseDto.setName(employee.getName());
+        responseDto.setCreatedAt(employee.getCreatedAt());
+        responseDto.setUpdatedAt(employee.getUpdatedAt());
+
+
+
+        employeeRepository.delete(employee);
+
+        return responseDto ;
+
+    }
+
+    public void softDeleteEmployee(Long id) {
+
+        Employee employee = employeeRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Employee not found"));
+
+        // Check if employee is already deleted
+        if (employee.getDeleted()) {
+            throw new RuntimeException("Employee is already deleted");
+        }
+
+        // Soft delete
+        employee.setDeleted(true);
+
+        // Update timestamp
+        employee.setUpdatedAt(LocalDateTime.now());
+
+        // Save changes
+        employeeRepository.save(employee);
     }
 }

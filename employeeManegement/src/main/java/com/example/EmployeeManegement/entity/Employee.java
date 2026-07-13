@@ -21,7 +21,7 @@ public class Employee {
     private Double salary ;
     private String phoneNumber ;
     private Integer age ;
-    private Boolean isDeleted ;
+    private Boolean isDeleted = false ;
     private LocalDateTime createdAt ;
     private LocalDateTime updatedAt ;
 
