@@ -5,7 +5,9 @@ import in.strikes.crudSpringBoot.Dto.CreateStudentResponseDto;
 import in.strikes.crudSpringBoot.Dto.UpdateStudentRequestDto;
 import in.strikes.crudSpringBoot.Dto.UpdateStudentResponseDto;
 import in.strikes.crudSpringBoot.entity.Student;
+import in.strikes.crudSpringBoot.exception.ResourceNotFoundException;
 import in.strikes.crudSpringBoot.repository.StudentRepository;
+import org.antlr.v4.runtime.RecognitionException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
@@ -68,11 +70,13 @@ public class StudentService {
 
 
     public CreateStudentResponseDto getStudent(Long id) {
-        Optional<Student> studentRes = studentRepository.findByIdAndDeletedIsFalse(id);
-        if (studentRes.isPresent()){
-            return mapToDto(studentRes.get());
-        }
-        return null;
+        Student studentRes = studentRepository
+                .findById(id)
+                .orElseThrow(() ->
+                        new ResourceNotFoundException("Student with id " + id + " not found"));
+
+        return mapToDto(studentRes) ;
+
     }
 
     public List<CreateStudentResponseDto> getAllStudent() {
