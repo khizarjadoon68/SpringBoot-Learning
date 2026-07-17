@@ -44,45 +44,35 @@ public class StudentController {
 
     @GetMapping
     public ResponseEntity<List<CreateStudentResponseDto>> getAllStudents() {
-
         List<CreateStudentResponseDto> studentList = studentService.getAllStudent();
-
-        if (studentList.isEmpty()) {
-            return ResponseEntity.notFound().build();
-        }
-
         return ResponseEntity.ok(studentList);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<UpdateStudentRequestDto> updateStudent(@PathVariable Long id ,
-                                                 @RequestBody UpdateStudentRequestDto updateStudentRequestDto){
+    public ResponseEntity<UpdateStudentRequestDto> updateStudent(@RequestParam Long id ,
+                                                 @RequestBody UpdateStudentRequestDto studentRes){
 
-         UpdateStudentResponseDto studentRes=studentService.
-                 updateStudent(id ,updateStudentRequestDto );
+         UpdateStudentResponseDto studentResp=
+                 studentService.updateStudent(id ,studentRes );
 
-         if (studentRes==null){
-             return ResponseEntity.notFound().build();
-         }
-         return ResponseEntity.ok(updateStudentRequestDto);
+         return ResponseEntity.ok(studentRes);
     }
 
     @DeleteMapping ("/{id}")
-    public ResponseEntity<String> deleteStudent (@PathVariable Long id){
-      boolean  isDeleted = studentService.deleteStudent(id);
-
-      if (!isDeleted){
-          return ResponseEntity.notFound().build();
-      }
-      return  ResponseEntity.ok("Record Deleted");
+    public ResponseEntity<String> deleteStudent (@RequestParam Long id){
+     studentService.deleteStudent(id);
+      return  ResponseEntity
+              .noContent()
+              .build();
     }
 
     @PatchMapping ("delete-soft/{id}")
-    public ResponseEntity<String> deleteStudentSoftly (@PathVariable Long id){
-        Boolean isDeleted = studentService.deleteStudentSoftly(id);
+    public ResponseEntity<String> deleteStudentSoftly (@RequestParam Long id){
+       studentService.deleteStudentSoftly(id);
 
-        if (!isDeleted)return ResponseEntity.notFound().build();
-        return ResponseEntity.ok("Record Deleted");
+        return ResponseEntity
+                .noContent()
+                .build();
     }
 
 
