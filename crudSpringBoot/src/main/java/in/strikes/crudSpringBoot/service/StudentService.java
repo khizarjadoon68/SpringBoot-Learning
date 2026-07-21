@@ -12,7 +12,6 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class StudentService {
@@ -29,14 +28,10 @@ public class StudentService {
         if (emailExist(student)){
             throw new duplicateResourceException("Student with this email "+student.getEmail()+" already exist");
         }
-
        Student studentRes = studentRepository.save(student);
-
        return mapToDto(studentRes);
 
     }
-
-
     private Student mapToEntity(CreateStudentRequestDto studentReqDto) {
 
         Student student = new Student();
