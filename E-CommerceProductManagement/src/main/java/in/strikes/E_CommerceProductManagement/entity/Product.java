@@ -30,6 +30,9 @@ public class Product {
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt ;
 
+    @Column(nullable = false)
+    private Boolean isDeleted = false;
+
     @ManyToOne
     @JoinColumn (name = "category_id")
     private Category category;
@@ -37,7 +40,9 @@ public class Product {
     public Product() {
     }
 
-    public Product(Long id, String name, String description, Double price, Integer quantity, String brand, Boolean available, LocalDateTime createdAt, LocalDateTime updatedAt, Category category) {
+    public Product(Long id, String name, String description, Double price, Integer quantity,
+                   String brand, Boolean available, LocalDateTime createdAt, LocalDateTime updatedAt,
+                   Category category , Boolean isDeleted) {
         this.id = id;
         this.name = name;
         this.description = description;
@@ -48,6 +53,7 @@ public class Product {
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;
         this.category = category;
+        this.isDeleted = isDeleted ;
     }
 
 
@@ -130,5 +136,13 @@ public class Product {
 
     public void setUpdatedAt(LocalDateTime updatedAt) {
         this.updatedAt = updatedAt;
+    }
+
+    public Boolean getIsDeleted() {
+        return isDeleted;
+    }
+
+    public void setIsDeleted(Boolean isdeleted) {
+        isDeleted = isdeleted;
     }
 }

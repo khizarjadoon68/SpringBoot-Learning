@@ -2,6 +2,7 @@ package in.strikes.E_CommerceProductManagement.controller;
 
 import in.strikes.E_CommerceProductManagement.dto.CategoryResponseDto;
 import in.strikes.E_CommerceProductManagement.dto.CreateCategoryRequestDto;
+import in.strikes.E_CommerceProductManagement.dto.UpdateCategoryRequestDto;
 import in.strikes.E_CommerceProductManagement.service.CategoryService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
@@ -42,6 +43,32 @@ public class CategoryController {
     public ResponseEntity<List<CategoryResponseDto>> getAllCategories (){
         List<CategoryResponseDto> responseDtoList = categoryService.getAllCategories();
         return ResponseEntity.ok(responseDtoList);
+    }
+
+    @PutMapping("/update/{id}")
+    public ResponseEntity<CategoryResponseDto> updateCategory(
+            @PathVariable Long id,
+            @Valid @RequestBody UpdateCategoryRequestDto updateCategoryRequestDto) {
+
+        CategoryResponseDto responseDto =
+                categoryService.updateCategory(id, updateCategoryRequestDto);
+
+        return ResponseEntity.ok(responseDto);
+    }
+
+    @DeleteMapping ("/hardDelete/{id}")
+    public ResponseEntity<String> deleteCategory (@PathVariable Long id){
+         categoryService.deleteCategory(id);
+         return ResponseEntity.ok("Category Deleted Successfully .") ;
+
+    }
+
+    @PatchMapping("/softDelete/{id}")
+    public ResponseEntity<String> softDeleteCategory(@PathVariable Long id) {
+
+        categoryService.softDeleteCategory(id);
+
+        return ResponseEntity.ok("Category deleted successfully");
     }
 
 }

@@ -17,17 +17,21 @@ public class Category {
 
     private String description;
 
+    @Column(nullable = false)
+    private Boolean isDeleted = false;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt ;
     public Category() {
     }
 
-    public Category(Long id, String name, String description, LocalDateTime createdAt, LocalDateTime updatedAt) {
+    public Category(Long id, String name, String description, LocalDateTime createdAt,
+                    LocalDateTime updatedAt ,Boolean isDeleted) {
         this.id = id;
         this.name = name;
         this.description = description;
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;
+        this.isDeleted = isDeleted ;
     }
 
 
@@ -69,5 +73,13 @@ public class Category {
 
     public void setUpdatedAt(LocalDateTime updatedAt) {
         this.updatedAt = updatedAt;
+    }
+
+    public Boolean getIsDeleted() {
+        return isDeleted;
+    }
+
+    public void setIsDeleted(Boolean isDeleted) {
+        this.isDeleted = isDeleted;
     }
 }

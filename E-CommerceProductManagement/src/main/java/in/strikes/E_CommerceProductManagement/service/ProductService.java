@@ -2,6 +2,7 @@ package in.strikes.E_CommerceProductManagement.service;
 
 import in.strikes.E_CommerceProductManagement.dto.CreateProductRequestDto;
 import in.strikes.E_CommerceProductManagement.dto.ProductResponseDto;
+import in.strikes.E_CommerceProductManagement.dto.UpdateProductRequestDto;
 import in.strikes.E_CommerceProductManagement.entity.Category;
 import in.strikes.E_CommerceProductManagement.entity.Product;
 import in.strikes.E_CommerceProductManagement.repository.CategoryRepository;
@@ -27,7 +28,7 @@ public class ProductService {
 
     public ProductResponseDto create(@Valid CreateProductRequestDto createProductRequestDto) {
 
-        Category category = categoryRepository.findById(
+        Category category = categoryRepository.findByIdAndIsDeletedFalse(
                 createProductRequestDto.getCategoryId())
                 .orElseThrow(()->
                         new RuntimeException("Category Not Found") ) ;
@@ -65,7 +66,7 @@ public class ProductService {
 
     public ProductResponseDto getById(Long id) {
 
-       Product product =  productRepository.findById(id)
+       Product product =  productRepository.findByIdAndIsDeletedFalse(id)
                .orElseThrow(()->new RuntimeException("Product Not Found"));
 
        ProductResponseDto responseDto = new ProductResponseDto();
@@ -85,9 +86,9 @@ public class ProductService {
 
     }
 
-    public List<ProductResponseDto> getAllCategories() {
+    public List<ProductResponseDto> getAllProducts() {
 
-        List<Product> products = productRepository.findAll();
+        List<Product> products = productRepository.findByIsDeletedFalse();
 
         List<ProductResponseDto> responseDtoList = new ArrayList<>();
 
@@ -111,5 +112,67 @@ public class ProductService {
         }
 
         return responseDtoList ;
+    }
+
+    public ProductResponseDto updateProduct(
+            Long id ,
+            @Valid UpdateProductRequestDto updateProductRequestDto) {
+
+        Product product = productRepository.findByIdAndIsDeletedFalse(id)
+                .orElseThrow(()->
+                        new RuntimeException("Product Not Found ."));
+
+        Category category = categoryRepository.findByIdAndIsDeletedFalse(updateProductRequestDto.getCategoryId())
+                .orElseThrow(()->
+                        new RuntimeException("Category Not Found ."));
+
+        product.setName(updateProductRequestDto.getName());
+        product.setDescription(updateProductRequestDto.getDescription());
+        product.setPrice(updateProductRequestDto.getPrice());
+        product.setQuantity(updateProductRequestDto.getQuantity());
+        product.setBrand(updateProductRequestDto.getBrand());
+        product.setAvailable(updateProductRequestDto.getAvailable());
+        product.setCategory(category);
+        product.setUpdatedAt(LocalDateTime.now());
+
+        Product updatedProduct = productRepository.save(product);
+
+        ProductResponseDto responseDto = new ProductResponseDto();
+
+        responseDto.setId(updatedProduct.getId());
+        responseDto.setName(updatedProduct.getName());
+        responseDto.setDescription(updatedProduct.getDescription());
+        responseDto.setPrice(updatedProduct.getPrice());
+        responseDto.setQuantity(updatedProduct.getQuantity());
+        responseDto.setBrand(updatedProduct.getBrand());
+        responseDto.setAvailable(updatedProduct.getAvailable());
+        responseDto.setCategoryName(updatedProduct.getCategory().getName());
+        responseDto.setCreatedAt(updatedProduct.getCreatedAt());
+        responseDto.setUpdatedAt(updatedProduct.getUpdatedAt());
+
+        return  responseDto ;
+    }
+
+    public void deleteProduct(Long id) {
+
+        Product product = productRepository.findByIdAndIsDeletedFalse(id)
+                .orElseThrow(()->
+                        new RuntimeException("Product Not Found ."));
+
+        productRepository.delete(product);
+
+    }
+
+    public void softDeleteProduct(Long id) {
+
+        Product product = productRepository.findByIdAndIsDeletedFalse(id)
+                .orElseThrow(()->
+                        new RuntimeException("Product Not Found ."));
+
+
+        product.setIsDeleted(true);
+        product.setUpdatedAt(LocalDateTime.now());
+
+        productRepository.save(product);
     }
 }
