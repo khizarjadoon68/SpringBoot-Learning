@@ -5,6 +5,8 @@ import in.strikes.E_CommerceProductManagement.dto.ProductResponseDto;
 import in.strikes.E_CommerceProductManagement.dto.UpdateProductRequestDto;
 import in.strikes.E_CommerceProductManagement.entity.Category;
 import in.strikes.E_CommerceProductManagement.entity.Product;
+import in.strikes.E_CommerceProductManagement.exception.CategoryNotFoundException;
+import in.strikes.E_CommerceProductManagement.exception.ProductNotFoundException;
 import in.strikes.E_CommerceProductManagement.repository.CategoryRepository;
 import in.strikes.E_CommerceProductManagement.repository.ProductRepository;
 import jakarta.validation.Valid;
@@ -31,7 +33,7 @@ public class ProductService {
         Category category = categoryRepository.findByIdAndIsDeletedFalse(
                 createProductRequestDto.getCategoryId())
                 .orElseThrow(()->
-                        new RuntimeException("Category Not Found") ) ;
+                        new CategoryNotFoundException("Category Not Found") ) ;
 
         Product product = new Product();
 
@@ -67,7 +69,7 @@ public class ProductService {
     public ProductResponseDto getById(Long id) {
 
        Product product =  productRepository.findByIdAndIsDeletedFalse(id)
-               .orElseThrow(()->new RuntimeException("Product Not Found"));
+               .orElseThrow(()->new ProductNotFoundException("Product Not Found"));
 
        ProductResponseDto responseDto = new ProductResponseDto();
 
@@ -120,11 +122,11 @@ public class ProductService {
 
         Product product = productRepository.findByIdAndIsDeletedFalse(id)
                 .orElseThrow(()->
-                        new RuntimeException("Product Not Found ."));
+                        new ProductNotFoundException("Product Not Found ."));
 
         Category category = categoryRepository.findByIdAndIsDeletedFalse(updateProductRequestDto.getCategoryId())
                 .orElseThrow(()->
-                        new RuntimeException("Category Not Found ."));
+                        new CategoryNotFoundException("Category Not Found ."));
 
         product.setName(updateProductRequestDto.getName());
         product.setDescription(updateProductRequestDto.getDescription());
@@ -157,7 +159,7 @@ public class ProductService {
 
         Product product = productRepository.findByIdAndIsDeletedFalse(id)
                 .orElseThrow(()->
-                        new RuntimeException("Product Not Found ."));
+                        new ProductNotFoundException("Product Not Found ."));
 
         productRepository.delete(product);
 
