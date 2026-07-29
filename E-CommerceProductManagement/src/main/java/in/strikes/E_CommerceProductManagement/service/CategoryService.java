@@ -43,7 +43,7 @@ public class CategoryService {
 
     public CategoryResponseDto getById(Long id) {
         Category category = categoryRepository.findByIdAndIsDeletedFalse(id)
-                .orElseThrow(()-> new  RuntimeException ("Category Not Fond"));
+                .orElseThrow(()-> new  RuntimeException ("Category Not Found"));
 
         CategoryResponseDto responseDto = new CategoryResponseDto() ;
         responseDto.setId(category.getId());
