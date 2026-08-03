@@ -7,7 +7,7 @@ import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 
-//@Component
+@Component
 public class AuthenticationFilter implements Filter {
 
 
@@ -29,6 +29,14 @@ public class AuthenticationFilter implements Filter {
         if (token == null || !token.equals("12345")) {
 
             httpResponse.setStatus(httpResponse.SC_UNAUTHORIZED);
+
+            httpResponse.setContentType("Application/json");
+            httpResponse.getWriter().write(
+                    "{\n" +
+                            "    \"message\" : \"Authentication is Requires\"\n" +
+                            "}"
+            );
+
             return ;
 
         }

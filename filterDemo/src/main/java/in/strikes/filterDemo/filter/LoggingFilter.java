@@ -9,7 +9,7 @@ import org.springframework.stereotype.Component;
 import java.io.IOException;
 import java.util.UUID;
 
-@Component
+//@Component
 public class LoggingFilter implements Filter {
 
     @Override
@@ -18,6 +18,7 @@ public class LoggingFilter implements Filter {
                          FilterChain filterChain)
             throws IOException, ServletException {
 
+        //Store the time in millimeter .
         Long startTime = System.currentTimeMillis();
 
         HttpServletRequest httpRequest =
@@ -26,8 +27,10 @@ public class LoggingFilter implements Filter {
         HttpServletResponse httpResponse =
                 (HttpServletResponse) servletResponse ;
 
+        //Create Random RequestId .
         String requestId = UUID.randomUUID().toString();
 
+        //Set Id ni RequestHeader
         httpResponse.setHeader("X-Request-Id" , requestId);
 
         //Request Log
@@ -37,9 +40,15 @@ public class LoggingFilter implements Filter {
 
 
         try {
+            /*
+            I have finished my work in this filter.
+            Now continue the request to the next filter or to the target servlet/controller.
+             */
             filterChain.doFilter(servletRequest ,servletResponse);
         }
         finally {
+            //Total duration of Request time .
+            //This Request takes how much time .
             Long duration = System.currentTimeMillis() - startTime ;
 
             //Response Status Log .
